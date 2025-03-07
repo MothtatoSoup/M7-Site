@@ -52,8 +52,16 @@ function createLightbox() {
    lbPlay.innerHTML = "&#9199"
    let timeID;
    lbPlay.onclick = function(){
-      showNext();
-      timeID = window.setInterval(showNext, 1500);
+      if (timeID){
+         //stop slideshow
+         window.clearInterval(timeID);
+         timeID = undefined
+      }else{
+         // start the show
+         showNext();
+         timeID = window.setInterval(showNext, 1500);
+      }
+      
    }
 
    // des images contain
@@ -65,8 +73,37 @@ function createLightbox() {
       let image = document.createElement("img");
       image.src = imgFiles[i];
       image.alt = imgCaptions[i];
+      image.onclick = createOverlay;
       lbImages.appendChild(image);
    }
+}
+function createOverlay(){ // The book wanted me to put this in the big function i think, buut that doesnt work
+   let overlay = document.createElement("div");
+   overlay.id = "lbOverlay";
+
+   //add the box to the overlay
+   let figureBox = document.createElement("figure");
+   overlay.appendChild(figureBox);
+
+   //add image to the figure box
+   let overlayImage = this.cloneNode("true");
+   figureBox.appendChild(overlayImage);
+
+   //add caption to fig bx
+   let overlayCaption = document.createElement("figcaption");
+   overlayCaption.textContent = this.alt;
+   figureBox.appendChild(overlayCaption);
+
+   //add close butt
+   let closeBox = document.createElement("div");
+   closeBox.id = "lbOverlayClose";
+   closeBox.innerHTML = "&times;"
+   closeBox.onclick = function(){
+      document.body.removeChild(overlay)
+   }
+   overlay.appendChild(closeBox);
+   
+   document.body.appendChild(overlay);
 }
 
 // func to move thru img list
